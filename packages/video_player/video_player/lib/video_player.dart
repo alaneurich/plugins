@@ -494,7 +494,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             return;
           }
           final Duration? newPosition = await position;
-          if (newPosition == null) {
+          final Duration? newDuration = await duration;
+          if (newPosition == null || newDuration == null) {
             return;
           }
           _updatePosition(newPosition);
@@ -544,6 +545,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _videoPlayerPlatform.getPosition(_textureId);
   }
 
+  Future<Duration?> get duration async {
+    if (_isDisposed) {
+      return null;
+    }
+    return await _videoPlayerPlatform.getDuration(_textureId);
+  }
+
   /// Sets the video's current timestamp to be at [moment]. The next
   /// time the video is played it will resume from the given [moment].
   ///
@@ -559,7 +567,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       position = Duration.zero;
     }
     await _videoPlayerPlatform.seekTo(_textureId, position);
-    _updatePosition(position);
+    _updatePosition(position, value.duration);
   }
 
   /// Sets the audio volume of [this].
@@ -666,9 +674,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     value = value.copyWith(caption: _getCaptionAt(value.position));
   }
 
-  void _updatePosition(Duration position) {
+  void _updatePosition(Duration position, Duration? duration) {
     value = value.copyWith(
       position: position,
+      duration: duration,
       caption: _getCaptionAt(position),
     );
   }

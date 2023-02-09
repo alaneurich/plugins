@@ -185,6 +185,18 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     player.play();
   }
 
+  @Override
+  public Messages.DurationMessage duration(TextureMessage arg) {
+    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    Messages.DurationMessage result =
+            new Messages.DurationMessage.Builder()
+                    .setDuration(player.getDuration())
+                    .setTextureId(arg.getTextureId())
+                    .build();
+    player.sendBufferingUpdate();
+    return result;
+  }
+
   public PositionMessage position(TextureMessage arg) {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     PositionMessage result =
