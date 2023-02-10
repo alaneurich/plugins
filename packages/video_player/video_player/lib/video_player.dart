@@ -498,7 +498,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           if (newPosition == null || newDuration == null) {
             return;
           }
-          _updatePosition(newPosition);
+          _updatePosition(newPosition, newDuration);
         },
       );
 
