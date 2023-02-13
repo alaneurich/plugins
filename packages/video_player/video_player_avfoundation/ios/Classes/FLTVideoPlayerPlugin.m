@@ -403,13 +403,21 @@ NS_INLINE UIViewController *rootViewController() {
   CMTime duration = [[_player currentItem] duration];
   if CMTIME_IS_INDEFINITE(duration) {
     NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
-    for (NSValue *rangeValue in [[_player currentItem] seekableTimeRanges]) {
+    if ([[[_player currentItem] seekableTimeRanges] count] == 0) {
+      return 0;
+    } else {
+      NSValue *rangeValue = [[[_player currentItem] seekableTimeRanges] lastObject];
       CMTimeRange range = [rangeValue CMTimeRangeValue];
       int64_t start = FLTCMTimeToMillis(range.start);
-      [values addObject:@[ @(start + FLTCMTimeToMillis(range.duration))]];
+      int64_t end = FLTCMTimeToMillis(range.duration);
+    //     for (NSValue *rangeValue in [[_player currentItem] seekableTimeRanges]) {
+    //       CMTimeRange range = [rangeValue CMTimeRangeValue];
+    //       int64_t start = FLTCMTimeToMillis(range.start);
+    //       [values addObject:@[ @(start + FLTCMTimeToMillis(range.duration))]];
+    //     }
+    //     NSNumber *max = [[values valueForKeyPath:@"@max.self"] firstObject];
+      return start + end;
     }
-    NSNumber *max = [[values valueForKeyPath:@"@max.self"] firstObject];
-    return  [max integerValue];
   }
   return FLTCMTimeToMillis(duration);
 }
