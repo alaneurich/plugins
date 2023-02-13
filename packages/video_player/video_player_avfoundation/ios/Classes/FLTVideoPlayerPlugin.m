@@ -393,7 +393,15 @@ NS_INLINE UIViewController *rootViewController() {
 }
 
 - (int64_t)position {
-  return FLTCMTimeToMillis([_player currentTime]);
+  CMTime duration = [[_player currentItem] duration];
+  if CMTIME_IS_INDEFINITE(duration) {
+     NSValue *rangeValue = [[[_player currentItem] seekableTimeRanges] lastObject];
+     CMTimeRange range = [rangeValue CMTimeRangeValue];
+     int64_t start = FLTCMTimeToMillis(range.start);
+     return FLTCMTimeToMillis([[_player currentItem] currentTime]) - start;
+  } else {
+    return FLTCMTimeToMillis([_player currentTime]);
+  }
 }
 
 - (int64_t)duration {
@@ -426,9 +434,20 @@ NS_INLINE UIViewController *rootViewController() {
   // TODO(stuartmorgan): Update this to use completionHandler: to only return
   // once the seek operation is complete once the Pigeon API is updated to a
   // version that handles async calls.
-  [_player seekToTime:CMTimeMake(location, 1000)
-      toleranceBefore:kCMTimeZero
-       toleranceAfter:kCMTimeZero];
+  CMTime duration = [[_player currentItem] duration];
+  if CMTIME_IS_INDEFINITE(duration) {
+      NSValue *rangeValue = [[[_player currentItem] seekableTimeRanges] lastObject];
+      CMTimeRange range = [rangeValue CMTimeRangeValue];
+      int64_t start = FLTCMTimeToMillis(range.start);
+      [_player seekToTime:CMTimeMake(location + start, 1000)
+          toleranceBefore:kCMTimeZero
+          toleranceAfter:kCMTimeZero];
+  } else {
+    [_player seekToTime:CMTimeMake(location, 1000)
+        toleranceBefore:kCMTimeZero
+        toleranceAfter:kCMTimeZero];
+  }
+
 }
 
 - (void)setIsLooping:(BOOL)isLooping {
