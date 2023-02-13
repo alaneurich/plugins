@@ -416,7 +416,7 @@ NS_INLINE UIViewController *rootViewController() {
     //       [values addObject:@[ @(start + FLTCMTimeToMillis(range.duration))]];
     //     }
     //     NSNumber *max = [[values valueForKeyPath:@"@max.self"] firstObject];
-      return start + end;
+      return end;
     }
   }
   return FLTCMTimeToMillis(duration);
