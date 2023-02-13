@@ -400,7 +400,18 @@ NS_INLINE UIViewController *rootViewController() {
   // Note: https://openradar.appspot.com/radar?id=4968600712511488
   // `[AVPlayerItem duration]` can be `kCMTimeIndefinite`,
   // use `[[AVPlayerItem asset] duration]` instead.
-  return FLTCMTimeToMillis([[[_player currentItem] asset] duration]);
+  CMTime duration = [[_player currentItem] duration];
+  if CMTIME_IS_INDEFINITE(duration) {
+    NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
+    for (NSValue *rangeValue in [[_player currentItem] seekableTimeRanges]) {
+      CMTimeRange range = [rangeValue CMTimeRangeValue];
+      int64_t start = FLTCMTimeToMillis(range.start);
+      [values addObject:@[ @(start + FLTCMTimeToMillis(range.duration))]];
+    }
+    NSNumber *max = [[values valueForKeyPath:@"@max.self"] firstObject];
+    return  [max integerValue];
+  }
+  return FLTCMTimeToMillis(duration);
 }
 
 - (void)seekTo:(int)location {
