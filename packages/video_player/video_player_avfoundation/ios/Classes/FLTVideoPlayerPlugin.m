@@ -647,6 +647,14 @@ NS_INLINE UIViewController *rootViewController() {
   return result;
 }
 
+- (FLTDurationMessage *)duration:(FLTTextureMessage *)input error:(FlutterError **)error {
+  FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
+  FLTDurationMessage *result = [FLTDurationMessage makeWithTextureId:input.textureId
+                                                            duration:@([player duration])];
+  return result;
+}
+
+
 - (void)seekTo:(FLTPositionMessage *)input error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
   [player seekTo:input.position.intValue];
