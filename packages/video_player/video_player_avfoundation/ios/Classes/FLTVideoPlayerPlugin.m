@@ -395,7 +395,7 @@ NS_INLINE UIViewController *rootViewController() {
 - (int64_t)position {
   CMTime duration = [[_player currentItem] duration];
   if CMTIME_IS_INDEFINITE(duration) {
-     return FLTCMTimeToMillis([[_player currentItem] currentTime]);
+     return FLTCMTimeToMillis([[player currentItem] currentTime]);
   } else {
     return FLTCMTimeToMillis([_player currentTime]);
   }
