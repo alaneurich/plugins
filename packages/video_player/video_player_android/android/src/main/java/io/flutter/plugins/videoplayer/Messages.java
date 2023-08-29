@@ -442,6 +442,80 @@ public class Messages {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
+  public static class MaxVideoResolutionMessage {
+    private @NonNull Long textureId;
+    public @NonNull Long getTextureId() { return textureId; }
+    public void setTextureId(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"textureId\" is null.");
+      }
+      this.textureId = setterArg;
+    }
+
+    private @NonNull Long width;
+    public @NonNull Long getWidth() { return width; }
+    public void setWidth(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"width\" is null.");
+      }
+      this.width = setterArg;
+    }
+
+    private @NonNull Long height;
+    public @NonNull Long getHeight() { return height; }
+    public void setHeight(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"height\" is null.");
+      }
+      this.height = setterArg;
+    }
+
+    /** Constructor is private to enforce null safety; use Builder. */
+    private MaxVideoResolutionMessage() {}
+    public static final class Builder {
+      private @Nullable Long textureId;
+      public @NonNull Builder setTextureId(@NonNull Long setterArg) {
+        this.textureId = setterArg;
+        return this;
+      }
+      private @Nullable Long width;
+      public @NonNull Builder setWidth(@NonNull Long setterArg) {
+        this.width = setterArg;
+        return this;
+      }
+      private @Nullable Long height;
+      public @NonNull Builder setHeight(@NonNull Long setterArg) {
+        this.height = setterArg;
+        return this;
+      }
+      public @NonNull MaxVideoResolutionMessage build() {
+        MaxVideoResolutionMessage pigeonReturn = new MaxVideoResolutionMessage();
+        pigeonReturn.setTextureId(textureId);
+        pigeonReturn.setWidth(width);
+        pigeonReturn.setHeight(height);
+        return pigeonReturn;
+      }
+    }
+    @NonNull Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("textureId", textureId);
+      toMapResult.put("width", width);
+      toMapResult.put("height", height);
+      return toMapResult;
+    }
+    static @NonNull MaxVideoResolutionMessage fromMap(@NonNull Map<String, Object> map) {
+      MaxVideoResolutionMessage pigeonResult = new MaxVideoResolutionMessage();
+      Object textureId = map.get("textureId");
+      pigeonResult.setTextureId((textureId == null) ? null : ((textureId instanceof Integer) ? (Integer)textureId : (Long)textureId));
+      Object width = map.get("width");
+      pigeonResult.setWidth((width == null) ? null : ((width instanceof Integer) ? (Integer)width : (Long)width));
+      Object height = map.get("height");
+      pigeonResult.setHeight((height == null) ? null : ((height instanceof Integer) ? (Integer)height : (Long)height));
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
   public static class MixWithOthersMessage {
     private @NonNull Boolean mixWithOthers;
     public @NonNull Boolean getMixWithOthers() { return mixWithOthers; }
@@ -494,18 +568,21 @@ public class Messages {
           return LoopingMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)131:         
-          return MixWithOthersMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return MaxVideoResolutionMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)132:         
-          return PlaybackSpeedMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return MixWithOthersMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)133:         
-          return PositionMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return PlaybackSpeedMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)134:         
-          return TextureMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return PositionMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)135:         
+          return TextureMessage.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)136:         
           return VolumeMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         default:        
@@ -527,24 +604,28 @@ public class Messages {
         stream.write(130);
         writeValue(stream, ((LoopingMessage) value).toMap());
       } else 
-      if (value instanceof MixWithOthersMessage) {
+      if (value instanceof MaxVideoResolutionMessage) {
         stream.write(131);
+        writeValue(stream, ((MaxVideoResolutionMessage) value).toMap());
+      } else 
+      if (value instanceof MixWithOthersMessage) {
+        stream.write(132);
         writeValue(stream, ((MixWithOthersMessage) value).toMap());
       } else 
       if (value instanceof PlaybackSpeedMessage) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((PlaybackSpeedMessage) value).toMap());
       } else 
       if (value instanceof PositionMessage) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((PositionMessage) value).toMap());
       } else 
       if (value instanceof TextureMessage) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((TextureMessage) value).toMap());
       } else 
       if (value instanceof VolumeMessage) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, ((VolumeMessage) value).toMap());
       } else 
 {
@@ -561,6 +642,7 @@ public class Messages {
     void setLooping(@NonNull LoopingMessage msg);
     void setVolume(@NonNull VolumeMessage msg);
     void setPlaybackSpeed(@NonNull PlaybackSpeedMessage msg);
+    void setMaxVideoResolution(@NonNull MaxVideoResolutionMessage msg);
     void play(@NonNull TextureMessage msg);
     @NonNull PositionMessage position(@NonNull TextureMessage msg);
     @NonNull DurationMessage duration(@NonNull TextureMessage msg);
@@ -703,6 +785,30 @@ public class Messages {
                 throw new NullPointerException("msgArg unexpectedly null.");
               }
               api.setPlaybackSpeed(msgArg);
+              wrapped.put("result", null);
+            }
+            catch (Error | RuntimeException exception) {
+              wrapped.put("error", wrapError(exception));
+            }
+            reply.reply(wrapped);
+          });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.AndroidVideoPlayerApi.setMaxVideoResolution", getCodec());
+        if (api != null) {
+          channel.setMessageHandler((message, reply) -> {
+            Map<String, Object> wrapped = new HashMap<>();
+            try {
+              ArrayList<Object> args = (ArrayList<Object>)message;
+              MaxVideoResolutionMessage msgArg = (MaxVideoResolutionMessage)args.get(0);
+              if (msgArg == null) {
+                throw new NullPointerException("msgArg unexpectedly null.");
+              }
+              api.setMaxVideoResolution(msgArg);
               wrapped.put("result", null);
             }
             catch (Error | RuntimeException exception) {

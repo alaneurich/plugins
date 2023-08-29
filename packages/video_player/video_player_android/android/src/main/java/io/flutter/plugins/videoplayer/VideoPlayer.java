@@ -60,6 +60,8 @@ final class VideoPlayer {
 
   private final VideoPlayerOptions options;
 
+  private DefaultTrackSelector trackSelector;
+
   VideoPlayer(
       Context context,
       EventChannel eventChannel,
@@ -71,8 +73,9 @@ final class VideoPlayer {
     this.eventChannel = eventChannel;
     this.textureEntry = textureEntry;
     this.options = options;
+    this.trackSelector = new DefaultTrackSelector(context);
 
-    ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
+    ExoPlayer exoPlayer = new ExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
 
     Uri uri = Uri.parse(dataSource);
     DataSource.Factory dataSourceFactory;
@@ -106,10 +109,12 @@ final class VideoPlayer {
       EventChannel eventChannel,
       TextureRegistry.SurfaceTextureEntry textureEntry,
       VideoPlayerOptions options,
-      QueuingEventSink eventSink) {
+      QueuingEventSink eventSink,
+      @Nullable DefaultTrackSelector trackSelector) {
     this.eventChannel = eventChannel;
     this.textureEntry = textureEntry;
     this.options = options;
+    this.trackSelector = trackSelector;
 
     setUpVideoPlayer(exoPlayer, eventSink);
   }
@@ -273,6 +278,12 @@ final class VideoPlayer {
     final PlaybackParameters playbackParameters = new PlaybackParameters(((float) value));
 
     exoPlayer.setPlaybackParameters(playbackParameters);
+  }
+
+  void setMaxVideoResolution(long width, long height) {
+    final DefaultTrackSelector.Parameters.Builder params =
+            trackSelector.buildUponParameters().setMaxVideoSize((int) width, (int) height);
+    trackSelector.setParameters(params);
   }
 
   void seekTo(int location) {

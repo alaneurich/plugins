@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class FLTVolumeMessage;
 @class FLTPlaybackSpeedMessage;
 @class FLTPositionMessage;
+@class FLTMaxVideoResolutionMessage;
 @class FLTDurationMessage;
 @class FLTCreateMessage;
 @class FLTMixWithOthersMessage;
@@ -63,6 +64,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSNumber * position;
 @end
 
+@interface FLTMaxVideoResolutionMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithTextureId:(NSNumber *)textureId
+    width:(NSNumber *)width
+    height:(NSNumber *)height;
+@property(nonatomic, strong) NSNumber * textureId;
+@property(nonatomic, strong) NSNumber * width;
+@property(nonatomic, strong) NSNumber * height;
+@end
+
 @interface FLTDurationMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
@@ -105,6 +117,7 @@ NSObject<FlutterMessageCodec> *FLTAVFoundationVideoPlayerApiGetCodec(void);
 - (void)setLooping:(FLTLoopingMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setVolume:(FLTVolumeMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setPlaybackSpeed:(FLTPlaybackSpeedMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setMaxVideoResolution:(FLTMaxVideoResolutionMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)play:(FLTTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable FLTPositionMessage *)position:(FLTTextureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;

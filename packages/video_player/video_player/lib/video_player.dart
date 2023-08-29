@@ -36,22 +36,22 @@ VideoPlayerPlatform get _videoPlayerPlatform {
 class VideoPlayerValue {
   /// Constructs a video with the given values. Only [duration] is required. The
   /// rest will initialize with default values when unset.
-  VideoPlayerValue({
-    required this.duration,
-    this.size = Size.zero,
-    this.position = Duration.zero,
-    this.caption = Caption.none,
-    this.captionOffset = Duration.zero,
-    this.buffered = const <DurationRange>[],
-    this.isInitialized = false,
-    this.isPlaying = false,
-    this.isLooping = false,
-    this.isBuffering = false,
-    this.volume = 1.0,
-    this.playbackSpeed = 1.0,
-    this.rotationCorrection = 0,
-    this.errorDescription,
-  });
+  VideoPlayerValue(
+      {required this.duration,
+      this.size = Size.zero,
+      this.position = Duration.zero,
+      this.caption = Caption.none,
+      this.captionOffset = Duration.zero,
+      this.buffered = const <DurationRange>[],
+      this.isInitialized = false,
+      this.isPlaying = false,
+      this.isLooping = false,
+      this.isBuffering = false,
+      this.volume = 1.0,
+      this.playbackSpeed = 1.0,
+      this.rotationCorrection = 0,
+      this.errorDescription,
+      this.maxVideoResolution});
 
   /// Returns an instance for a video that hasn't been loaded.
   VideoPlayerValue.uninitialized()
@@ -116,6 +116,9 @@ class VideoPlayerValue {
   /// Degrees to rotate the video (clockwise) so it is displayed correctly.
   final int rotationCorrection;
 
+  /// The [maxVideoResolution] of the currently loaded video.
+  final Resolution? maxVideoResolution;
+
   /// Indicates whether or not the video has been loaded and is ready to play.
   final bool isInitialized;
 
@@ -157,6 +160,7 @@ class VideoPlayerValue {
     double? playbackSpeed,
     int? rotationCorrection,
     String? errorDescription = _defaultErrorDescription,
+    Resolution? maxVideoResolution,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -175,6 +179,7 @@ class VideoPlayerValue {
       errorDescription: errorDescription != _defaultErrorDescription
           ? errorDescription
           : this.errorDescription,
+      maxVideoResolution: maxVideoResolution ?? this.maxVideoResolution,
     );
   }
 
@@ -537,6 +542,22 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
+  Future<void> _applyMaxVideoResolution() async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+
+    // If we haven't set a max video resolution we won't do anything
+    if (value.maxVideoResolution == null) {
+      return;
+    }
+
+    await _videoPlayerPlatform.setMaxVideoResolution(
+      _textureId,
+      value.maxVideoResolution!,
+    );
+  }
+
   /// The position in the current video.
   Future<Duration?> get position async {
     if (_isDisposed) {
@@ -611,6 +632,27 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     value = value.copyWith(playbackSpeed: speed);
     await _applyPlaybackSpeed();
+  }
+
+  /// Sets the max video resolution of [this].
+  ///
+  /// The [resolution] will be used to set a maximum resolution value which will
+  /// allow the player to pick a different stream to play
+  Future<void> setMaxVideoResolution(Resolution resolution) async {
+    if (resolution.width <= 0) {
+      throw ArgumentError.value(
+        resolution.width,
+        'Non-positive resolution width is generally unsupported.',
+      );
+    } else if (resolution.height <= 0) {
+      throw ArgumentError.value(
+        resolution.height,
+        'Non-positive resolution height is generally unsupported.',
+      );
+    }
+
+    value = value.copyWith(maxVideoResolution: resolution);
+    await _applyMaxVideoResolution();
   }
 
   /// Sets the caption offset.

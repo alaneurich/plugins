@@ -57,6 +57,13 @@ class CreateMessage {
   Map<String?, String?> httpHeaders;
 }
 
+class MaxVideoResolutionMessage {
+  MaxVideoResolutionMessage(this.textureId, this.width, this.height);
+  int textureId;
+  int width;
+  int height;
+}
+
 class MixWithOthersMessage {
   MixWithOthersMessage(this.mixWithOthers);
   bool mixWithOthers;
@@ -70,6 +77,7 @@ abstract class AndroidVideoPlayerApi {
   void setLooping(LoopingMessage msg);
   void setVolume(VolumeMessage msg);
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
+  void setMaxVideoResolution(MaxVideoResolutionMessage msg);
   void play(TextureMessage msg);
   PositionMessage position(TextureMessage msg);
   DurationMessage duration(TextureMessage msg);
