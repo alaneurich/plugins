@@ -14,7 +14,12 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'src/closed_caption_file.dart';
 
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
-    show DurationRange, DataSourceType, VideoFormat, VideoPlayerOptions;
+    show
+        DurationRange,
+        DataSourceType,
+        VideoFormat,
+        VideoPlayerOptions,
+        Resolution;
 
 export 'src/closed_caption_file.dart';
 
