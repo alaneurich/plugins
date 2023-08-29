@@ -20,6 +20,7 @@ import io.flutter.plugins.videoplayer.Messages.PlaybackSpeedMessage;
 import io.flutter.plugins.videoplayer.Messages.PositionMessage;
 import io.flutter.plugins.videoplayer.Messages.TextureMessage;
 import io.flutter.plugins.videoplayer.Messages.VolumeMessage;
+import io.flutter.plugins.videoplayer.Messages.MaxVideoResolutionMessage;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
