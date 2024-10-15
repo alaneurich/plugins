@@ -240,7 +240,6 @@ NS_INLINE UIViewController *rootViewController() {
   };
 
   _player = [AVPlayer playerWithPlayerItem:item];
-  _player.preventsDisplaySleepDuringVideoPlayback = NO;
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 
   // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
